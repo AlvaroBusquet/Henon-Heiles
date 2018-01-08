@@ -33,6 +33,9 @@ def Hp(r,theta,vr,vth):
     return 0.5*(vr**2 + r**2) + r*vr*(np.sin(theta)*np.sin(vth) + np.cos(theta)*np.cos(vth)) + (1/2)*r**2 + (np.sin(theta)*np.cos(theta)**2 - (1/3)*np.sin(theta)**3)*r**3
 #return 0.5*(vr**2 + vth**2) + 0.5*(r**2) + (r**3)*(np.sin(theta)- 4/3*np.sin**3(theta))
 
+def Pot(a,b):
+    return (1/2)*a**2+(np.sin(b)*(np.cos(b)**2)-(1/3)*np.sin(b)**3)*a**3
+
 # Velocidade angular, obtem-se de Hp fazendo vr = 0
 """
 def vth(c,r,theta):
@@ -115,46 +118,66 @@ k4vth = list(range(N))
 k4r = list(range(N))
 k4th = list(range(N))
 
+#definicao das condicoes iniciais de r e theta
+a=np.linspace(0,0.4,10) #para aplicar ao r
+b=np.linspace(0,pi,10) #para aplicar ao theta
+rCond=[]
+thCond=[]
+
+for i in range(0,9):
+    for j in range(0,9):
+        if ( Pot(a[i],b[j])<0.15 and Pot(a[i],b[j])>0.0):
+            print(Pot(a[i],b[j]))
+            rCond.append(a[i])
+            thCond.append(b[j])
+
+print('rCond:',rCond)
+print('thCond:',thCond)
+print('a:',a)
+print('b:',b)
+print(len(rCond),len(a))
+print(len(thCond),len(b))
+
 #Fazendo Runge kutta nas equações de movimento para r e theta ARRUMAR COND INICIAIS A PARTIR DE H !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 d = np.linspace(0,pi,100) #condicoes iniciais de theta
-f = np.linspace(0,0.7,100) #condicoes iniciais de r
+f = np.linspace(0,0.4,100) #condicoes iniciais de r
 
-for j in range(0,len(d)): #for j in range(0,len(d)):
-    r[0] = f[j] #r[0] = f[j]
-    #for k in range(0,len(d)):
-    th[0] = d[j]
-    vr[0] = r[0] #velocidade radial
-    aux = 2*0.17 - r[0]**2 - 2*(r[0]**3)*(np.sin(th[0]) - 4/3*(np.sin(th[0]))**3)
-    vth[0] = np.sqrt(aux) #velocidade angular vth[0] = np.sqrt(aux)
-    for i in range(0,N-1): #for i in range(0,N-1):
-        k1vr[i] = Fr(1,r[i],th[i])*h
-        k1vth[i] = Fth(1,r[i],th[i])*h
-        k1r[i] = vr[i]*h
-        k1th[i] = vth[i]*h
+for j in range(0,len(rCond)): #for j in range(0,len(d)):
+    r[0] = rCond[j] #r[0] = f[j]
+    vr[0] = r[0]#velocidade radial
+    for k in range(0,len(thCond)):
+        th[0] = thCond[k]
+        aux = 2*0.17 - r[0]**2 - 2*(r[0]**3)*(np.sin(th[0]) - 4/3*(np.sin(th[0]))**3)
+        vth[0] = np.sqrt(aux) #velocidade angular vth[0] = np.sqrt(aux)
+        for i in range(0,N-1): #for i in range(0,N-1):
+            k1vr[i] = Fr(1,r[i],th[i])*h
+            k1vth[i] = Fth(1,r[i],th[i])*h
+            k1r[i] = vr[i]*h
+            k1th[i] = vth[i]*h
 
-        k2vr[i] = Fr(1,r[i]+k1r[i]/2,th[i]+k1th[i]/2)*h
-        k2vth[i] = Fth(1,r[i]+k1r[i]/2,th[i]+k1th[i]/2)*h
-        k2r[i] = (vr[i] + k1vr[i]/2)*h
-        k2th[i] = (vth[i] + k1vth[i]/2)*h
+            k2vr[i] = Fr(1,r[i]+k1r[i]/2,th[i]+k1th[i]/2)*h
+            k2vth[i] = Fth(1,r[i]+k1r[i]/2,th[i]+k1th[i]/2)*h
+            k2r[i] = (vr[i] + k1vr[i]/2)*h
+            k2th[i] = (vth[i] + k1vth[i]/2)*h
 
-        k3vr[i] = Fr(1,r[i]+k2r[i]/2,th[i]+k2th[i]/2)*h
-        k3vth[i] = Fth(1,r[i]+k2r[i]/2,th[i]+k2th[i]/2)*h
-        k3r[i] = (vr[i] + k2vr[i]/2)*h
-        k3th[i] = (vth[i] + k2vth[i]/2)*h
+            k3vr[i] = Fr(1,r[i]+k2r[i]/2,th[i]+k2th[i]/2)*h
+            k3vth[i] = Fth(1,r[i]+k2r[i]/2,th[i]+k2th[i]/2)*h
+            k3r[i] = (vr[i] + k2vr[i]/2)*h
+            k3th[i] = (vth[i] + k2vth[i]/2)*h
 
-        k4vr[i] = Fr(1,r[i]+k3r[i],th[i]+k3th[i])*h
-        k4vth[i] = Fth(1,r[i]+k3r[i],th[i]+k3th[i])*h
-        k4r[i] = (vr[i] + k3vr[i])*h
-        k4th[i] = (vth[i] + k3vth[i])*h
+            k4vr[i] = Fr(1,r[i]+k3r[i],th[i]+k3th[i])*h
+            k4vth[i] = Fth(1,r[i]+k3r[i],th[i]+k3th[i])*h
+            k4r[i] = (vr[i] + k3vr[i])*h
+            k4th[i] = (vth[i] + k3vth[i])*h
 
-        vr[i+1] = vr[i] + 1/6*(k1vr[i] + 2*(k2vr[i] + k3vr[i]) + k4vr[i])
-        vth[i+1] = vth[i] + 1/6*(k1vth[i] + 2*(k2vth[i] + k3vth[i]) + k4vth[i])
+            vr[i+1] = vr[i] + 1/6*(k1vr[i] + 2*(k2vr[i] + k3vr[i]) + k4vr[i])
+            vth[i+1] = vth[i] + 1/6*(k1vth[i] + 2*(k2vth[i] + k3vth[i]) + k4vth[i])
 
-        r[i+1] = r[i] + 1/6*(k1r[i] + 2*(k2r[i] + k3r[i]) + k4r[i])
-        th[i+1] = th[i] + 1/6*(k1th[i] + 2*(k2th[i] + k3th[i]) + k4th[i])
+            r[i+1] = r[i] + 1/6*(k1r[i] + 2*(k2r[i] + k3r[i]) + k4r[i])
+            th[i+1] = th[i] + 1/6*(k1th[i] + 2*(k2th[i] + k3th[i]) + k4th[i])
 
-        x[i+1] = r[i+1]*np.cos(th[i+1])
-        y[i+1] = r[i+1]*np.sin(th[i+1])
+            x[i+1] = r[i+1]*np.cos(th[i+1])
+            y[i+1] = r[i+1]*np.sin(th[i+1])
 
 #    print(x[0],x[N-1])
 #    print(r)
