@@ -119,24 +119,24 @@ k4r = list(range(N))
 k4th = list(range(N))
 
 #definicao das condicoes iniciais de r e theta
-a=np.linspace(0,0.4,10) #para aplicar ao r
-b=np.linspace(0,pi,10) #para aplicar ao theta
+a=np.linspace(0,0.6,10) #para aplicar ao r
+b=np.linspace(0,2*pi,10) #para aplicar ao theta
 rCond=[]
 thCond=[]
 
 for i in range(0,9):
     for j in range(0,9):
-        if ( Pot(a[i],b[j])<0.15 and Pot(a[i],b[j])>0.0):
+        if ( Pot(a[i],b[j])<0.16 and Pot(a[i],b[j])>0.0):
             print(Pot(a[i],b[j]))
             rCond.append(a[i])
             thCond.append(b[j])
 
-print('rCond:',rCond)
-print('thCond:',thCond)
-print('a:',a)
-print('b:',b)
-print(len(rCond),len(a))
-print(len(thCond),len(b))
+#print('rCond:',rCond)
+#print('thCond:',thCond)
+#print('a:',a)
+#print('b:',b)
+#print(len(rCond),len(a))
+#print(len(thCond),len(b))
 
 #Fazendo Runge kutta nas equações de movimento para r e theta ARRUMAR COND INICIAIS A PARTIR DE H !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 d = np.linspace(0,pi,100) #condicoes iniciais de theta
@@ -144,7 +144,7 @@ f = np.linspace(0,0.4,100) #condicoes iniciais de r
 
 for j in range(0,len(rCond)): #for j in range(0,len(d)):
     r[0] = rCond[j] #r[0] = f[j]
-    vr[0] = r[0]#velocidade radial
+    vr[0] = 0#velocidade radial
     for k in range(0,len(thCond)):
         th[0] = thCond[k]
         aux = 2*0.17 - r[0]**2 - 2*(r[0]**3)*(np.sin(th[0]) - 4/3*(np.sin(th[0]))**3)
@@ -176,8 +176,8 @@ for j in range(0,len(rCond)): #for j in range(0,len(d)):
             r[i+1] = r[i] + 1/6*(k1r[i] + 2*(k2r[i] + k3r[i]) + k4r[i])
             th[i+1] = th[i] + 1/6*(k1th[i] + 2*(k2th[i] + k3th[i]) + k4th[i])
 
-            x[i+1] = r[i+1]*np.cos(th[i+1])
-            y[i+1] = r[i+1]*np.sin(th[i+1])
+            x[i+1]=r[i+1]*np.cos(th[i+1])
+            y[i+1]=r[i+1]*np.sin(th[i+1])
 
 #    print(x[0],x[N-1])
 #    print(r)
