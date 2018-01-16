@@ -36,25 +36,26 @@ def Hp(r,theta,vr,vth):
 def Pot(a,b):
     return (1/2)*a**2+(np.sin(b)*(np.cos(b)**2)-(1/3)*np.sin(b)**3)*a**3
 
-# Velocidade angular, obtem-se de Hp fazendo vr = 0
+#Velocidade angular, obtem-se de Hp fazendo vr = 0
 """
 def vth(c,r,theta):
     if (r != 0):
         return  2*c/r -2*r*(np.sin(theta)-4/3*(np.sin(theta))**3) -1
 """
 
-# H para K = 0, formando surperficies equipotenciais
-N = 5000
+#H para K = 0, formando surperficies equipotenciais
+N = 1000 #quantidade de passos
 h = 5/N #tamanho do passo
-yl = np.linspace(-1.5,1.5,N) #
-z = list(range(N))
+yl = np.linspace(-1.5,1.5,N) #valores de y para as curvas
 c = [i* .4/20 for i in range(1,20)] #conjunto de valores para energia potencial
 
+#valores de x para as curvas
 def xl(yl,c):
     return (c + 1/3*yl**3 - 1/2*yl**2)/(1/2 + yl)
 
+#plot das curvas
 fig = plt.figure()
-for hl in c: #
+for hl in c:
     if (hl <= 0.16):
         plt.plot(np.sqrt(xl(yl,hl)),yl,'r-')
         plt.plot(-np.sqrt(xl(yl,hl)),yl,'r-')
@@ -76,7 +77,7 @@ vy = list(range(N))
 vr = list(range(N))
 vth = list(range(N))
 
-#definicao dos termos do Runge-Kutta de 4a ordem (em cartesiano)
+#definicao dos termos do Runge-Kutta de 4a ordem (em cartesianas)
 k1vx = list(range(N))
 k1vy = list(range(N))
 k1x = list(range(N))
@@ -119,32 +120,25 @@ k4r = list(range(N))
 k4th = list(range(N))
 
 #definicao das condicoes iniciais de r e theta
-a=np.linspace(0,0.6,10) #para aplicar ao r
+a=np.linspace(0,1,10) #para aplicar ao r
 b=np.linspace(0,2*pi,10) #para aplicar ao theta
-rCond=[]
-thCond=[]
+rCond=[] #condicoes iniciais de r
+thCond=[] #condicoes iniciais de theta
 
+#varredura dos elementos dos vetores de condicoes iniciais
 for i in range(0,9):
     for j in range(0,9):
-        if ( Pot(a[i],b[j])<0.16 and Pot(a[i],b[j])>0.0):
-            print(Pot(a[i],b[j]))
+        if (Pot(a[i],b[j])<0.16 and Pot(a[i],b[j])>0.0): #condicao para pontos de menor energia que o valor limite
             rCond.append(a[i])
             thCond.append(b[j])
 
-#print('rCond:',rCond)
-#print('thCond:',thCond)
-#print('a:',a)
-#print('b:',b)
-#print(len(rCond),len(a))
-#print(len(thCond),len(b))
-
 #Fazendo Runge kutta nas equações de movimento para r e theta ARRUMAR COND INICIAIS A PARTIR DE H !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-d = np.linspace(0,pi,100) #condicoes iniciais de theta
-f = np.linspace(0,0.4,100) #condicoes iniciais de r
+#d = np.linspace(0,pi,100) #condicoes iniciais genericas de theta
+#f = np.linspace(0,0.4,100) #condicoes iniciais genericas de r
 
 for j in range(0,len(rCond)): #for j in range(0,len(d)):
     r[0] = rCond[j] #r[0] = f[j]
-    vr[0] = 0#velocidade radial
+    vr[0] = 0 #velocidade radial
     for k in range(0,len(thCond)):
         th[0] = thCond[k]
         aux = 2*0.17 - r[0]**2 - 2*(r[0]**3)*(np.sin(th[0]) - 4/3*(np.sin(th[0]))**3)
@@ -195,7 +189,7 @@ for j in range(0,len(rCond)): #for j in range(0,len(d)):
 #        plt.plot(x,y,'y-')
 #    else:
 #        plt.plot(x,y,'p-')
-    plt.plot(x,y)
+plt.plot(x,y)
 
 plt.axis([-1.5,1.5,-1.5,1.5])
 plt.plot(np.sqrt(xl(yl,0.16)),yl,'r-')
